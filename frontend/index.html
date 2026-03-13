@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CivicPulse - Civic Complaint Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* Modern aesthetic micro-animations */
+        .fade-in {
+            animation: fadeIn 0.8s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="index.html" class="logo">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                </svg>
+                CivicPulse
+            </a>
+            <div class="nav-links">
+                <button id="themeToggle" class="btn btn-outline" style="padding: 0.5rem; border-radius: 50%; width: 40px; height: 40px; border-color: var(--border); color: var(--text-main);" title="Toggle Light/Dark Theme">🌓</button>
+                <a href="citizen.html" class="btn btn-outline">Citizen Portal</a>
+                <a href="admin.html" class="btn btn-primary">Admin Dashboard</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container fade-in">
+        <section class="hero">
+            <h1>Empowering Citizens.<br>Improving Governance.</h1>
+            <p>CivicPulse bridges the gap between citizens and local government. Report civic issues like road damage, water supply, and garbage directly to the concerned authorities.</p>
+            <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 2rem;">
+                <a href="citizen.html" class="btn btn-primary" style="font-size: 1.125rem; padding: 0.875rem 2rem;">Report an Issue</a>
+                <a href="#how-it-works" class="btn btn-outline" style="font-size: 1.125rem; padding: 0.875rem 2rem;">Learn More</a>
+            </div>
+        </section>
+
+        <section id="how-it-works" style="padding: 4rem 0;">
+            <h2 style="text-align: center; margin-bottom: 3rem; font-size: 2.25rem;">How it works</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+                <div class="card" style="text-align: center;">
+                    <div style="background: var(--primary); color: white; width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: bold; margin: 0 auto 1.5rem;">1</div>
+                    <h3 style="margin-bottom: 1rem;">Report</h3>
+                    <p style="color: var(--text-muted)">Take a photo and describe the issue you are facing in your locality using our Citizen Portal.</p>
+                </div>
+                <div class="card" style="text-align: center;">
+                    <div style="background: var(--primary); color: white; width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: bold; margin: 0 auto 1.5rem;">2</div>
+                    <h3 style="margin-bottom: 1rem;">Track</h3>
+                    <p style="color: var(--text-muted)">Get an automated complaint ID and monitor the real-time status of your complaint.</p>
+                </div>
+                <div class="card" style="text-align: center;">
+                    <div style="background: var(--primary); color: white; width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: bold; margin: 0 auto 1.5rem;">3</div>
+                    <h3 style="margin-bottom: 1rem;">Resolve</h3>
+                    <p style="color: var(--text-muted)">Government departments receive the data instantly and take appropriate actions to resolve.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Theme logic for Index page
+        const themeToggle = document.getElementById('themeToggle');
+        if (localStorage.getItem('theme') === 'light') {
+            document.body.classList.add('light-mode');
+        }
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('light-mode');
+            localStorage.setItem('theme', document.body.classList.contains('light-mode') ? 'light' : 'dark');
+        });
+    </script>
+</body>
+</html>

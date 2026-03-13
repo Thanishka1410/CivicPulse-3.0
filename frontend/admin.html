@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - CivicPulse</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .dashboard-main {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 2rem;
+            min-height: calc(100vh - 70px);
+            padding: 2rem 0;
+        }
+        .sidebar {
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            padding-right: 1.5rem;
+        }
+        .sidebar a {
+            display: block;
+            padding: 0.75rem 1rem;
+            color: var(--text-main);
+            text-decoration: none;
+            border-radius: var(--radius);
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+        .sidebar a:hover, .sidebar a.active {
+            background-color: var(--primary);
+            color: white;
+        }
+        @media (max-width: 768px) {
+            .dashboard-main {
+                grid-template-columns: 1fr;
+            }
+            .sidebar {
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+                padding-right: 0;
+                padding-bottom: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="index.html" class="logo">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                </svg>
+                CivicPulse <span style="font-size: 0.875rem; color: var(--text-muted); font-weight: 500;">Admin</span>
+            </a>
+            <div class="nav-links">
+                <span id="navAdminName" style="font-weight: 600; color: var(--primary);" class="hidden"></span>
+                <button id="themeToggle" class="btn btn-outline" style="padding: 0.5rem; border-radius: 50%; width: 40px; height: 40px; border-color: var(--border); color: var(--text-main); margin-right: 0.5rem;" title="Toggle Light/Dark Theme">🌓</button>
+                <a href="#" id="logoutBtn" class="btn btn-outline hidden">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Auth Section -->
+    <main class="container">
+        <section id="authSection" class="auth-container card">
+            <h2 style="text-align: center; margin-bottom: 1.5rem;">Admin Login</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label class="form-label" for="loginUsername">Username</label>
+                    <input type="text" id="loginUsername" class="form-control" required value="admin">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" class="form-control" required value="admin123">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Login as Admin</button>
+            </form>
+        </section>
+
+        <!-- Dashboard Section -->
+        <section id="dashboardSection" class="dashboard-main hidden fade-in">
+            <aside class="sidebar">
+                <h3 style="margin-bottom: 1.5rem; font-size: 1.25rem; color: var(--text-muted);">Menu</h3>
+                <a href="#" class="active" id="navDashboard">Dashboard Overview</a>
+                <a href="#" id="navComplaints">Manage Complaints</a>
+                <a href="#" id="navMap">Map View</a>
+            </aside>
+            
+            <div class="contentArea">
+                <h2 style="font-size: 2rem; margin-bottom: 2rem;" id="pageTitle">Overview</h2>
+                
+                <!-- Stats Grid -->
+                <div id="statsView">
+                    <div class="stats-grid">
+                        <div class="card stat-card">
+                            <h3 id="statTotal">0</h3>
+                            <p>Total Complaints</p>
+                        </div>
+                        <div class="card stat-card">
+                            <h3 id="statPending" style="color: #D97706;">0</h3>
+                            <p>Pending</p>
+                        </div>
+                        <div class="card stat-card">
+                            <h3 id="statProgress" style="color: #2563EB;">0</h3>
+                            <p>In Progress</p>
+                        </div>
+                        <div class="card stat-card">
+                            <h3 id="statCompleted" style="color: #059669;">0</h3>
+                            <p>Completed</p>
+                        </div>
+                        <div class="card stat-card">
+                            <h3 id="statEscalated" style="color: var(--danger);">0</h3>
+                            <p>Escalated / Delayed</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Complaints Table View -->
+                <div id="complaintsView" class="card hidden">
+                    <h3 style="margin-bottom: 1rem;">All Complaints</h3>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Dept</th>
+                                    <th>Type</th>
+                                    <th>Location</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="allComplaintsTable">
+                                <!-- Dynamic content -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Map View -->
+                <div id="mapView" class="card hidden" style="padding: 0; overflow: hidden; height: 600px;">
+                    <div id="complaintsMap" style="width: 100%; height: 100%;"></div>
+                </div>
+                
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal for Edit Complaint -->
+    <div id="editModal" class="hidden" style="position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 100; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
+        <div class="card fade-in" style="width: 100%; max-width: 500px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h3 style="font-size: 1.5rem;">Update Complaint</h3>
+                <button type="button" id="closeModal" style="background:none; border:none; font-size: 1.5rem; cursor:pointer;">&times;</button>
+            </div>
+            <form id="editForm">
+                <input type="hidden" id="editComplaintId">
+                <div class="form-group">
+                    <label class="form-label" for="editDepartment">Assign Department</label>
+                    <select id="editDepartment" class="form-control" required>
+                        <option value="Unassigned">Unassigned</option>
+                        <option value="Public Works">Public Works</option>
+                        <option value="Sanitation">Sanitation</option>
+                        <option value="Water Board">Water Board</option>
+                        <option value="Electricity Board">Electricity Board</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="editStatus">Status</label>
+                    <select id="editStatus" class="form-control" required>
+                        <option value="Pending">Pending</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Completed">Completed</option>
+                        <option value="Cancelled">Cancelled</option>
+                    </select>
+                </div>
+                
+                <div style="margin-top: 1.5rem;">
+                    <p style="font-weight: 600; margin-bottom: 0.5rem; font-size: 0.875rem;">Attached Image:</p>
+                    <img id="editImage" src="" alt="Complaint Image" style="max-width: 100%; max-height: 200px; border-radius: var(--radius); border: 1px solid var(--border);">
+                </div>
+
+                <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                    <button type="button" class="btn btn-outline" id="cancelModal" style="flex:1;">Cancel</button>
+                    <button type="submit" class="btn btn-primary" style="flex:1;">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+    <script>
+        // Init Theme to prevent flash
+        if (localStorage.getItem('theme') === 'light') {
+            document.body.classList.add('light-mode');
+        }
+    </script>
+    <script src="js/admin.js"></script>
+</body>
+</html>

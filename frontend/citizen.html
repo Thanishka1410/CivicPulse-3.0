@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Citizen Portal - CivicPulse</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="index.html" class="logo">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                </svg>
+                CivicPulse
+            </a>
+            <div class="nav-links">
+                <button id="themeToggle" class="btn btn-outline" style="padding: 0.5rem; border-radius: 50%; width: 40px; height: 40px; border-color: var(--border); color: var(--text-main); margin-right: 0.5rem;" title="Toggle Light/Dark Theme">🌓</button>
+                <span id="navUsername" style="font-weight: 600; color: var(--primary);" class="hidden"></span>
+                <a href="#" id="logoutBtn" class="btn btn-outline hidden">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container" style="padding: 2rem 0;">
+        
+        <!-- Auth Section -->
+        <section id="authSection" class="auth-container card">
+            <h2 style="text-align: center; margin-bottom: 1.5rem;" id="authTitle">Login to Citizen Portal</h2>
+            
+            <form id="loginForm">
+                <div class="form-group">
+                    <label class="form-label" for="loginUsername">Username</label>
+                    <input type="text" id="loginUsername" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Login</button>
+                <p style="text-align: center; margin-top: 1rem; font-size: 0.875rem; color: var(--text-muted);">
+                    Don't have an account? <a href="#" id="showRegister" style="color: var(--primary); font-weight: 600;">Register here</a>
+                </p>
+            </form>
+
+            <form id="registerForm" class="hidden">
+                <div class="form-group">
+                    <label class="form-label" for="regUsername">Username</label>
+                    <input type="text" id="regUsername" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="regPhone">Phone Number</label>
+                    <input type="tel" id="regPhone" class="form-control" pattern="^(\+91[\-\s]?)?[6-9]\d{9}$" title="Enter a valid Indian phone number (10 digits starting with 6-9, optionally prefixed with +91)" placeholder="+91 9876543210" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="regPassword">Password</label>
+                    <input type="password" id="regPassword" class="form-control" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).{8,}" title="Password must contain at least 8 characters, including uppercase, lowercase, numbers, and special characters." required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Register</button>
+                <p style="text-align: center; margin-top: 1rem; font-size: 0.875rem; color: var(--text-muted);">
+                    Already have an account? <a href="#" id="showLogin" style="color: var(--primary); font-weight: 600;">Login here</a>
+                </p>
+            </form>
+        </section>
+
+        <!-- Dashboard Section -->
+        <section id="dashboardSection" class="hidden fade-in">
+            <div style="display: flex; gap: 2rem; flex-wrap: wrap;">
+                
+                <!-- Submit Complaint Form -->
+                <div class="card" style="flex: 1; min-width: 300px;">
+                    <h3 style="margin-bottom: 1.5rem; font-size: 1.5rem; color: var(--primary);">Submit New Complaint</h3>
+                    <form id="complaintForm">
+                        <div class="form-group">
+                            <label class="form-label" for="issueType">Issue Type</label>
+                            <select id="issueType" class="form-control" required>
+                                <option value="">Select Issue Type</option>
+                                <option value="Roads">Roads</option>
+                                <option value="Garbage">Garbage</option>
+                                <option value="Water">Water</option>
+                                <option value="Electricity">Electricity</option>
+                                <option value="Others">Others</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="location">Location</label>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <input type="text" id="location" class="form-control" placeholder="E.g., 5th Ave Street, Near Park" required>
+                                <button type="button" id="detectLocationBtn" class="btn btn-outline" style="white-space: nowrap;">Detect 📍</button>
+                            </div>
+                            <input type="hidden" id="latitude">
+                            <input type="hidden" id="longitude">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="description">Description</label>
+                            <textarea id="description" class="form-control" rows="4" placeholder="Describe the issue in detail" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="imageUpload">Upload Image</label>
+                            <input type="file" id="imageUpload" class="form-control" accept="image/*" required>
+                            <img id="imagePreview" src="" alt="Image Preview" style="max-width: 100%; max-height: 200px; display: none; margin-top: 1rem; border-radius: var(--radius); border: 1px solid var(--border);">
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">Submit Complaint</button>
+                    </form>
+                </div>
+
+                <!-- Complaints List -->
+                <div class="card" style="flex: 2; min-width: 300px;">
+                    <h3 style="margin-bottom: 1.5rem; font-size: 1.5rem;">My Complaints</h3>
+                    <div id="complaintsListContainer" style="max-height: 500px; overflow-y: auto; padding-right: 0.5rem;">
+                        <!-- Dynamic Content -->
+                    </div>
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Init Theme to prevent flash
+        if (localStorage.getItem('theme') === 'light') {
+            document.body.classList.add('light-mode');
+        }
+    </script>
+    <script src="js/citizen.js"></script>
+</body>
+</html>
