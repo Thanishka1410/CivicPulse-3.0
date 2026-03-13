@@ -2,8 +2,14 @@ const admin = require('firebase-admin');
 const dotenv = require('dotenv');
 dotenv.config();
 
-// Require the service key JSON file
-const serviceAccount = require('./serviceAccountKey.json');
+// Prioritize reading from Environment Variable (for Render deployment)
+let serviceAccount;
+if (process.env.FIREBASE_SERVICE_ACCOUNT) {
+    serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+} else {
+    // Fallback to local file for development
+    serviceAccount = require('./serviceAccountKey.json');
+}
 
 try {
   admin.initializeApp({
