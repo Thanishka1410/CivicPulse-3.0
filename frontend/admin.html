@@ -67,17 +67,40 @@
     <!-- Auth Section -->
     <main class="container">
         <section id="authSection" class="auth-container card">
-            <h2 style="text-align: center; margin-bottom: 1.5rem;">Admin Login</h2>
+            <h2 style="text-align: center; margin-bottom: 1.5rem;" id="authTitle">Admin Login</h2>
+            
             <form id="loginForm">
                 <div class="form-group">
                     <label class="form-label" for="loginUsername">Username</label>
-                    <input type="text" id="loginUsername" class="form-control" required value="admin">
+                    <input type="text" id="loginUsername" class="form-control" required>
                 </div>
                 <div class="form-group">
                     <label class="form-label" for="loginPassword">Password</label>
-                    <input type="password" id="loginPassword" class="form-control" required value="admin123">
+                    <input type="password" id="loginPassword" class="form-control" required>
                 </div>
                 <button type="submit" class="btn btn-primary" style="width: 100%;">Login as Admin</button>
+                <p style="text-align: center; margin-top: 1rem; font-size: 0.875rem; color: var(--text-muted);">
+                    New Admin? <a href="#" id="showRegister" style="color: var(--primary); font-weight: 600;">Register here</a>
+                </p>
+            </form>
+
+            <form id="registerForm" class="hidden">
+                <div class="form-group">
+                    <label class="form-label" for="regUsername">Username</label>
+                    <input type="text" id="regUsername" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="regPassword">Password</label>
+                    <input type="password" id="regPassword" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="regSecretCode">Secret Verification Code</label>
+                    <input type="password" id="regSecretCode" class="form-control" placeholder="Enter Administrative Code" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Register Admin</button>
+                <p style="text-align: center; margin-top: 1rem; font-size: 0.875rem; color: var(--text-muted);">
+                    Already an admin? <a href="#" id="showLogin" style="color: var(--primary); font-weight: 600;">Login here</a>
+                </p>
             </form>
         </section>
 

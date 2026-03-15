@@ -157,7 +157,7 @@ h1, h2, h3, h4, h5, h6 {
   font-family: inherit;
   transition: var(--transition);
   background-color: #0F172A; /* Slate 900 */
-  color: var(--text-main);
+  color: #F8FAFC; /* Always light text on dark background */
 }
 
 .form-control:focus {

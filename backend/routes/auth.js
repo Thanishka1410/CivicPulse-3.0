@@ -35,6 +35,37 @@ router.post('/register', async (req, res) => {
     }
 });
 
+// ADMIN REGISTER
+router.post('/admin/register', async (req, res) => {
+    try {
+        const { username, password, secretCode } = req.body;
+        
+        if (secretCode !== 'ResolveX') {
+            return res.status(401).json({ error: "Invalid Administrative Secret Code" });
+        }
+        
+        // Prevent duplicate usernames if doing robust validation
+        const usersRef = db.collection('users');
+        const snapshot = await usersRef.where('username', '==', username).get();
+        if (!snapshot.empty) {
+            return res.status(400).json({ error: "Username already exists" });
+        }
+
+        const adminRef = db.collection('users').doc();
+        await adminRef.set({
+            uid: adminRef.id,
+            username,
+            password, // MUST hash in production
+            role: 'admin',
+            createdAt: new Date()
+        });
+        
+        res.status(201).json({ message: 'Admin registered successfully', uid: adminRef.id });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 // CITIZEN/ADMIN LOGIN
 router.post('/login', async (req, res) => {
     try {

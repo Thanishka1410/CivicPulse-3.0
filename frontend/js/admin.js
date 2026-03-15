@@ -2,7 +2,9 @@ const API_URL = '/api';
 
 // UI Elements
 const loginForm = document.getElementById('loginForm');
+const registerForm = document.getElementById('registerForm');
 const authSection = document.getElementById('authSection');
+const authTitle = document.getElementById('authTitle');
 const dashboardSection = document.getElementById('dashboardSection');
 const navAdminName = document.getElementById('navAdminName');
 const logoutBtn = document.getElementById('logoutBtn');
@@ -83,7 +85,49 @@ logoutBtn.addEventListener('click', (e) => {
     showAuth();
 });
 
+// Auth Toggles
+document.getElementById('showRegister').addEventListener('click', (e) => {
+    e.preventDefault();
+    loginForm.classList.add('hidden');
+    registerForm.classList.remove('hidden');
+    authTitle.textContent = 'Register Admin';
+});
+
+document.getElementById('showLogin').addEventListener('click', (e) => {
+    e.preventDefault();
+    registerForm.classList.add('hidden');
+    loginForm.classList.remove('hidden');
+    authTitle.textContent = 'Admin Login';
+});
+
 // Authentication
+registerForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const username = document.getElementById('regUsername').value;
+    const password = document.getElementById('regPassword').value;
+    const secretCode = document.getElementById('regSecretCode').value;
+
+    try {
+        const res = await fetch(`${API_URL}/auth/admin/register`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password, secretCode })
+        });
+        const data = await res.json();
+
+        if (res.ok) {
+            alert('Admin registered successfully! You can now login.');
+            document.getElementById('showLogin').click();
+            registerForm.reset();
+        } else {
+            alert(data.error || 'Registration failed');
+        }
+    } catch (err) {
+        console.error(err);
+        alert('An error occurred during registration');
+    }
+});
+
 loginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const username = document.getElementById('loginUsername').value;
