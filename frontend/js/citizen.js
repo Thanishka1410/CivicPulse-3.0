@@ -18,9 +18,17 @@ const latitudeInput = document.getElementById('latitude');
 const longitudeInput = document.getElementById('longitude');
 const imageUpload = document.getElementById('imageUpload');
 const imagePreview = document.getElementById('imagePreview');
+const startCameraBtn = document.getElementById('startCameraBtn');
+const cameraContainer = document.getElementById('cameraContainer');
+const cameraFeed = document.getElementById('cameraFeed');
+const takePhotoBtn = document.getElementById('takePhotoBtn');
+const closeCameraBtn = document.getElementById('closeCameraBtn');
+const photoCanvas = document.getElementById('photoCanvas');
 const themeToggle = document.getElementById('themeToggle');
 
 let currentUser = JSON.parse(localStorage.getItem('citizen_user')) || null;
+let currentStream = null;
+let capturedBlob = null;
 
 themeToggle.addEventListener('click', () => {
     document.body.classList.toggle('light-mode');
@@ -168,20 +176,57 @@ detectLocationBtn.addEventListener('click', () => {
     });
 });
 
-// Image Preview Handler
+// Image Preview & Camera Handlers
 imageUpload.addEventListener('change', function() {
     const file = this.files[0];
     if (file) {
+        capturedBlob = file;
         const reader = new FileReader();
         reader.onload = function(e) {
             imagePreview.src = e.target.result;
             imagePreview.style.display = 'block';
+            stopCamera();
         }
         reader.readAsDataURL(file);
-    } else {
-        imagePreview.style.display = 'none';
-        imagePreview.src = '';
     }
+});
+
+startCameraBtn.addEventListener('click', async () => {
+    try {
+        currentStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+        cameraFeed.srcObject = currentStream;
+        cameraContainer.classList.remove('hidden');
+        imagePreview.style.display = 'none'; // hide old preview
+    } catch (err) {
+        alert('Camera access denied or unavailable on this device.');
+        console.error(err);
+    }
+});
+
+function stopCamera() {
+    if (currentStream) {
+        currentStream.getTracks().forEach(track => track.stop());
+        currentStream = null;
+    }
+    cameraContainer.classList.add('hidden');
+}
+
+closeCameraBtn.addEventListener('click', stopCamera);
+
+takePhotoBtn.addEventListener('click', () => {
+    if (!currentStream) return;
+    
+    photoCanvas.width = cameraFeed.videoWidth;
+    photoCanvas.height = cameraFeed.videoHeight;
+    const ctx = photoCanvas.getContext('2d');
+    ctx.drawImage(cameraFeed, 0, 0, photoCanvas.width, photoCanvas.height);
+    
+    photoCanvas.toBlob((blob) => {
+        capturedBlob = new File([blob], "webcam_capture.jpg", { type: "image/jpeg" });
+        imagePreview.src = URL.createObjectURL(blob);
+        imagePreview.style.display = 'block';
+        stopCamera();
+    }, 'image/jpeg', 0.9);
 });
 
 // Complaints Handlers
@@ -195,7 +240,12 @@ complaintForm.addEventListener('submit', async (e) => {
     formData.append('lat', latitudeInput.value);
     formData.append('lng', longitudeInput.value);
     formData.append('description', document.getElementById('description').value);
-    formData.append('image', document.getElementById('imageUpload').files[0]);
+    
+    if (!capturedBlob) {
+        alert("Please provide an evidence image by uploading or using the camera.");
+        return;
+    }
+    formData.append('image', capturedBlob);
 
     try {
         const res = await fetch(`${API_URL}/complaints`, {
@@ -207,6 +257,7 @@ complaintForm.addEventListener('submit', async (e) => {
         if (res.ok) {
             alert(`Complaint submitted successfully!\nComplaint ID: ${data.complaintId}`);
             complaintForm.reset();
+            capturedBlob = null;
             imagePreview.style.display = 'none';
             imagePreview.src = '';
             detectLocationBtn.textContent = 'Detect 📍';
